@@ -1,18 +1,21 @@
-import { spawn } from "child_process";
+import { fork } from "child_process";
 
 const spawnChildProcess = async (args) => {
-  const childStream = spawn("node", ["./files/script.js", ...args], {
-    stdio: ["pipe", "pipe", "inherit"],
+  const childProcess = fork("./files/script.js", args);
+
+  childProcess.send({ type: "start", data: args });
+
+  childProcess.on("message", (message) => {
+    console.log("Message from child:", message);
   });
 
-  process.stdin.pipe(childStream.stdin);
-
-  childStream.stdout.pipe(process.stdout);
-
-  childStream.on("error", (err) => {
+  childProcess.on("error", (err) => {
     console.error("Error spawning child process:", err);
+  });
+
+  childProcess.on("exit", (code) => {
+    console.log(`Child process exited with code ${code}`);
   });
 };
 
-// Put your arguments in function call to test this functionality
 spawnChildProcess([1, 2, 3, 4, 5]);
