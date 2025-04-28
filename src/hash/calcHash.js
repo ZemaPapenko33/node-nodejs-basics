@@ -1,6 +1,6 @@
 import fs from "fs";
 import crypto from "crypto";
-import { pipeline } from "stream";
+import { pipeline, Transform } from "stream";
 import { promisify } from "util";
 
 // Преобразуем pipeline в промис для асинхронного использования
